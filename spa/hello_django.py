@@ -9,10 +9,14 @@ settings.configure(
 )
 
 def hello_world(request):
-    return HttpResponse("Hello, Django!")
+    return HttpResponse(request.headers.get('foo'))
 
 urlpatterns = [
     path("", hello_world),
 ]
 
-application = WSGIHandler()
+def wrapped_app(environ, start_response):
+    environ['HTTP_FOO'] = 'Bar'
+    return app(environ, start_response)
+
+app = WSGIHandler()
